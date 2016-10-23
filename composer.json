@@ -1,0 +1,21 @@
+{
+  "name": "bulgaria-php/glagol-php-overriding",
+  "description": "Library for handling in-method overriding based on argument signature. Created for the purposes of Glagol DSL",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Yoan-Alexander Grigorov",
+      "email": "joan.grigorov@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"Glagol\\Overriding\\": "src/"}
+  },
+  "autoload-dev": {
+    "psr-4": {"GlagolTest\\Overriding\\": "test/"}
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.6.*"
+  }
+}
