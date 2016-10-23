@@ -2,7 +2,10 @@ language: php
 php:
   - '7.0'
 sudo: required
-before_script: composer install
+before_script:
+  - php5dismod xdebug
+  - composer install
+  - php5enmod xdebug
 script:
   - phpunit
 cache:
