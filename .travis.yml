@@ -3,9 +3,9 @@ php:
   - '7.0'
 sudo: required
 before_script:
-  - phpdismod xdebug
+  - phpenv config-rm xdebug.ini
   - composer install
-  - phpenmod xdebug
+  - phpenv config-add xdebug.ini
 script:
   - phpunit
 cache:
