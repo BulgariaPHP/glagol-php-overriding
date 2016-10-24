@@ -18,11 +18,6 @@ class Custom implements Type
         $this->type = $type;
     }
 
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
     public function isSameTypeAs($value): bool
     {
         return $value === $this->type;

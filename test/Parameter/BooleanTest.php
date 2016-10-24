@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace GlagolTest\Overriding\Type;
+namespace GlagolTest\Overriding\Parameter;
 
 use Glagol\Overriding\Parameter\Boolean;
 use PHPUnit_Framework_TestCase;

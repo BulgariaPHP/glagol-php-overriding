@@ -15,11 +15,6 @@ class TypedList implements Collection
         $this->type = $type;
     }
 
-    public function getType(): Type
-    {
-        return $this->type;
-    }
-
     public function isSameTypeAs($value): bool
     {
         if (!is_array($value) && !$value instanceof Traversable) {

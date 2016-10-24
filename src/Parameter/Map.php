@@ -22,22 +22,6 @@ class Map implements Collection
     }
 
     /**
-     * @return Type
-     */
-    public function getKey(): Type
-    {
-        return $this->key;
-    }
-
-    /**
-     * @return Type
-     */
-    public function getValue(): Type
-    {
-        return $this->value;
-    }
-
-    /**
      * TODO create a different case using the Map Glagol collection (to be created soon)
      *
      * @param $value
