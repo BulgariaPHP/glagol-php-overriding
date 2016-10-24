@@ -129,4 +129,12 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->getCount(), 3);
     }
+
+    public function testFluidInterface()
+    {
+        $overrider = new Overrider();
+
+        $this->assertInstanceOf(Overrider::class, $overrider->override(function (int $a) {}, new Integer()));
+        $this->assertInstanceOf(Overrider::class, $overrider->execute(2));
+    }
 }

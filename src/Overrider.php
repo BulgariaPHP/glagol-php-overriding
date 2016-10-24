@@ -18,14 +18,17 @@ class Overrider
         }
 
         $this->overrides[$key] = new Rule($body, ...$signature);
+
+        return $this;
     }
 
     /**
      * @param array ...$args
      *
+     * @return self
      * @throws CannotMatchConstructorException
      */
-    public function execute(...$args)
+    public function execute(...$args): self
     {
         foreach ($this->overrides as $override)
         {
@@ -33,7 +36,7 @@ class Overrider
             {
                 $override->run(...$args);
 
-                return;
+                return $this;
             }
         }
 
