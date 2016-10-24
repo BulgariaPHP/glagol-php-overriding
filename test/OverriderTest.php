@@ -2,11 +2,13 @@
 declare(strict_types=1);
 namespace GlagolTest\Overriding;
 
+use Glagol\Overriding\CannotMatchConstructorException;
 use Glagol\Overriding\DuplicateRuleException;
 use Glagol\Overriding\Overrider;
-use Glagol\Overriding\Type\Integer;
-use Glagol\Overriding\Type\Real;
-use Glagol\Overriding\Type\Str;
+use Glagol\Overriding\Parameter\Integer;
+use Glagol\Overriding\Parameter\Optional;
+use Glagol\Overriding\Parameter\Real;
+use Glagol\Overriding\Parameter\Str;
 use PHPUnit_Framework_Exception;
 use PHPUnit_Framework_TestCase;
 
@@ -99,5 +101,31 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
         $overrider->override(function (string $c, float $d) {
         }, new Str(), new Real());
+    }
+
+    public function testShouldThrowConstructorNotFoundExceptionWhenThereAreMoreRequiredParameters()
+    {
+        $this->expectException(CannotMatchConstructorException::class);
+
+        $overrider = new Overrider();
+
+        $overrider->override(function (string $a, float $c, float $d) {
+        }, new Str(), new Real(), new Real());
+
+        $overrider->execute("bla", 2.3);
+    }
+
+    public function testShouldMatchConstructorWithEmptyOptionalParameters()
+    {
+        $overrider = new Overrider();
+
+        $overrider->override(function (string $a, float $c, float $d = null) {
+            $this->assertSame("bla", $a);
+            $this->assertSame(2.3, $c);
+        }, new Str(), new Real(), new Optional(new Real()));
+
+        $overrider->execute("bla", 2.3);
+
+        $this->assertEquals($this->getCount(), 2);
     }
 }

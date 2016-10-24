@@ -1,5 +1,5 @@
 <?php
-namespace Glagol\Overriding\Type;
+namespace Glagol\Overriding\Parameter;
 
 use Traversable;
 

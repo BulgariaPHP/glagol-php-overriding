@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace GlagolTest\Overriding\Type;
 
-use Glagol\Overriding\Type\Boolean;
+use Glagol\Overriding\Parameter\Boolean;
 use PHPUnit_Framework_TestCase;
 
 class BooleanTest extends PHPUnit_Framework_TestCase

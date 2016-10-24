@@ -9,7 +9,7 @@ class Overrider
      */
     private $overrides = [];
 
-    public function override(callable $body, Type\Type ...$signature)
+    public function override(callable $body, Parameter\Type ...$signature)
     {
         $key = $this->createKeyFromSignature(...$signature);
 
@@ -20,6 +20,11 @@ class Overrider
         $this->overrides[$key] = new Rule($body, ...$signature);
     }
 
+    /**
+     * @param array ...$args
+     *
+     * @throws CannotMatchConstructorException
+     */
     public function execute(...$args)
     {
         foreach ($this->overrides as $override)
@@ -27,16 +32,20 @@ class Overrider
             if ($override->matches(...$args))
             {
                 $override->run(...$args);
+
+                return;
             }
         }
+
+        throw new CannotMatchConstructorException();
     }
 
     /**
-     * @param Type\Type[] ...$signature
+     * @param Parameter\Type[] ...$signature
      *
      * @return string
      */
-    private function createKeyFromSignature(Type\Type ...$signature): string
+    private function createKeyFromSignature(Parameter\Type ...$signature): string
     {
         $key = "";
         foreach ($signature as $type) {

@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace Glagol\Overriding;
 
-use Glagol\Overriding\Type\Type;
+use Glagol\Overriding\Parameter\Optional;
+use Glagol\Overriding\Parameter\Type;
 
 class Rule
 {
@@ -28,14 +29,18 @@ class Rule
             return false;
         }
 
+        $position = 0;
         foreach ($args as $position => $arg) {
             if (!$this->signature[$position]->isSameTypeAs($arg)) {
                 return false;
             }
         }
 
-        // TODO check if the result of the signature is optional params
-        // if so - return true, otherwise false
+        for ($i = $position + 1; $i < count($this->signature); $i++) {
+            if (!$this->signature[$i] instanceof Optional) {
+                return false;
+            }
+        }
 
         return true;
     }

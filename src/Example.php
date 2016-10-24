@@ -1,9 +1,9 @@
 <?php
 namespace Glagol\Overriding;
 
-use Glagol\Overriding\Type\Integer;
-use Glagol\Overriding\Type\Real;
-use Glagol\Overriding\Type\Str;
+use Glagol\Overriding\Parameter\Integer;
+use Glagol\Overriding\Parameter\Real;
+use Glagol\Overriding\Parameter\Str;
 
 class Example
 {
