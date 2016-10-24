@@ -122,10 +122,11 @@ class OverriderTest extends PHPUnit_Framework_TestCase
         $overrider->override(function (string $a, float $c, float $d = null) {
             $this->assertSame("bla", $a);
             $this->assertSame(2.3, $c);
+            $this->assertNull($d);
         }, new Str(), new Real(), new Optional(new Real()));
 
         $overrider->execute("bla", 2.3);
 
-        $this->assertEquals($this->getCount(), 2);
+        $this->assertEquals($this->getCount(), 3);
     }
 }
