@@ -151,4 +151,18 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->getCount(), 6);
     }
+
+    public function testNotMatchingWhenArgsAreMoreThanExpected()
+    {
+        $this->expectException(CannotMatchConstructorException::class);
+
+        $overrider = new Overrider();
+
+        $overrider->override(function (string $a, float $c) {
+            $this->assertSame("abv", $a);
+            $this->assertSame(2.3, $c);
+        }, new Str(), new Real());
+
+        $overrider->execute("abv", 2.3, 123);
+    }
 }
