@@ -9,6 +9,7 @@ use Glagol\Overriding\Parameter\Integer;
 use Glagol\Overriding\Parameter\Optional;
 use Glagol\Overriding\Parameter\Real;
 use Glagol\Overriding\Parameter\Str;
+use Glagol\Overriding\Rule;
 use PHPUnit_Framework_Exception;
 use PHPUnit_Framework_TestCase;
 
@@ -90,19 +91,6 @@ class OverriderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->getCount(), 2);
     }
 
-    public function testShouldThrowExceptionWhenTryingToPutOverrideWithDuplicateSignature()
-    {
-        $this->expectException(DuplicateRuleException::class);
-
-        $overrider = new Overrider();
-
-        $overrider->override(function (string $a, float $c) {
-        }, new Str(), new Real());
-
-        $overrider->override(function (string $c, float $d) {
-        }, new Str(), new Real());
-    }
-
     public function testShouldThrowConstructorNotFoundExceptionWhenThereAreMoreRequiredParameters()
     {
         $this->expectException(CannotMatchConstructorException::class);
@@ -134,7 +122,33 @@ class OverriderTest extends PHPUnit_Framework_TestCase
     {
         $overrider = new Overrider();
 
-        $this->assertInstanceOf(Overrider::class, $overrider->override(function (int $a) {}, new Integer()));
+        $this->assertInstanceOf(Rule::class, $overrider->override(function (int $a) {}, new Integer()));
         $this->assertInstanceOf(Overrider::class, $overrider->execute(2));
+    }
+
+    public function testShouldExecuteOnlyOnWhenCondition()
+    {
+        $overrider = new Overrider();
+
+        $rule = $overrider->override(function (string $a, float $c, float $d = null) {
+            $this->assertSame("abv", $a);
+            $this->assertSame(2.3, $c);
+            $this->assertNull($d);
+        }, new Str(), new Real(), new Optional(new Real()));
+
+        $rule->when(function (string $a, float $c, float $d = null):bool {
+            return $a === "abv";
+        });
+
+        $overrider->override(function (string $a, float $c, float $d = null) {
+            $this->assertSame("bla", $a);
+            $this->assertSame(5.4, $c);
+            $this->assertSame(7.6, $d);
+        }, new Str(), new Real(), new Optional(new Real()));
+
+        $overrider->execute("abv", 2.3);
+        $overrider->execute("bla", 5.4, 7.6);
+
+        $this->assertEquals($this->getCount(), 6);
     }
 }

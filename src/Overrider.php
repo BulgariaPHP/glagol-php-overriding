@@ -9,17 +9,9 @@ class Overrider
      */
     private $overrides = [];
 
-    public function override(callable $body, Parameter\Type ...$signature)
+    public function override(callable $body, Parameter\Type ...$signature): Rule
     {
-        $key = $this->createKeyFromSignature(...$signature);
-
-        if (array_key_exists($key, $this->overrides)) {
-            throw new DuplicateRuleException("Cannot override rule, same signature already defined");
-        }
-
-        $this->overrides[$key] = new Rule($body, ...$signature);
-
-        return $this;
+        return $this->overrides[] = new Rule($body, ...$signature);
     }
 
     /**
@@ -30,7 +22,13 @@ class Overrider
      */
     public function execute(...$args): self
     {
-        foreach ($this->overrides as $override)
+        $overrides = $this->overrides;
+
+        usort($overrides, function (Rule $a, Rule $b): int {
+            return $a->hasWhen() ? -1 : 1;
+        });
+
+        foreach ($overrides as $override)
         {
             if ($override->matches(...$args))
             {
@@ -41,20 +39,5 @@ class Overrider
         }
 
         throw new CannotMatchConstructorException();
-    }
-
-    /**
-     * @param Parameter\Type[] ...$signature
-     *
-     * @return string
-     */
-    private function createKeyFromSignature(Parameter\Type ...$signature): string
-    {
-        $key = "";
-        foreach ($signature as $type) {
-            $key .= get_class($type);
-        }
-
-        return $key;
     }
 }

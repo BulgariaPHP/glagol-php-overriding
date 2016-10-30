@@ -17,6 +17,11 @@ class Rule
      */
     private $signature;
 
+    /**
+     * @var callable
+     */
+    private $whenCondition;
+
     public function __construct(callable $body, Type ...$signature)
     {
         $this->body = $body;
@@ -42,7 +47,30 @@ class Rule
             }
         }
 
+        if ($this->hasWhen() && !$this->checkWhenCondition(...$args)) {
+            return false;
+        }
+
         return true;
+    }
+
+    private function checkWhenCondition(...$args): bool
+    {
+        $when = $this->whenCondition;
+
+        return $when(...$args);
+    }
+
+    public function hasWhen(): bool
+    {
+        return $this->whenCondition !== null;
+    }
+
+    public function when(callable $whenCondition): self
+    {
+        $this->whenCondition = $whenCondition;
+
+        return $this;
     }
 
     public function run(...$args)
