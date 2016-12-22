@@ -167,8 +167,6 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testExecuteARuleWithEmptySignature()
     {
-        $this->expectException(CannotMatchConstructorException::class);
-
         $overrider = new Overrider();
 
         $overrider->override(function () {
@@ -190,8 +188,6 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testExecuteARuleWithOptionalSignaturePatternUsingNoArgs()
     {
-        $this->expectException(CannotMatchConstructorException::class);
-
         $overrider = new Overrider();
 
         $overrider->override(function (float $b = null, float $c = null) {
@@ -213,13 +209,11 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testReturnValueShouldBeFromExecutedRule()
     {
-        $this->expectException(CannotMatchConstructorException::class);
-
         $overrider = new Overrider();
 
         $overrider->override(function (int $a) {
             return $a;
-        });
+        }, new Integer());
 
         $this->assertEquals(3, $overrider->execute(3));
         $this->assertEquals(4, $overrider->execute(4));
