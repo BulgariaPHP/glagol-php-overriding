@@ -123,7 +123,6 @@ class OverriderTest extends PHPUnit_Framework_TestCase
         $overrider = new Overrider();
 
         $this->assertInstanceOf(Rule::class, $overrider->override(function (int $a) {}, new Integer()));
-        $this->assertInstanceOf(Overrider::class, $overrider->execute(2));
     }
 
     public function testShouldExecuteOnlyOnWhenCondition()
@@ -164,6 +163,29 @@ class OverriderTest extends PHPUnit_Framework_TestCase
         }, new Str(), new Real());
 
         $overrider->execute("abv", 2.3, 123);
+    }
+
+    public function testExecuteARuleWithEmptySignature()
+    {
+        $this->expectException(CannotMatchConstructorException::class);
+
+        $overrider = new Overrider();
+
+        $overrider->override(function () {
+            return true;
+        });
+
+        $overrider->override(function (int $a) {
+            return false;
+        }, new Integer());
+
+        $overrider->override(function (string $a) {
+            return false;
+        }, new Str());
+
+        $this->assertTrue($overrider->execute());
+        $this->assertFalse($overrider->execute(123));
+        $this->assertFalse($overrider->execute('123'));
     }
 
     public function testReturnValueShouldBeFromExecutedRule()
