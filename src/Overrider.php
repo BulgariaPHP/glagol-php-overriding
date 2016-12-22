@@ -16,11 +16,9 @@ class Overrider
 
     /**
      * @param array ...$args
-     *
-     * @return self
-     * @throws CannotMatchConstructorException
+     * @return mixed
      */
-    public function execute(...$args): self
+    public function execute(...$args)
     {
         $overrides = $this->overrides;
 
@@ -32,9 +30,7 @@ class Overrider
         {
             if ($override->matches(...$args))
             {
-                $override->run(...$args);
-
-                return $this;
+                return $override->run(...$args);
             }
         }
 

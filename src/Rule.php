@@ -77,6 +77,6 @@ class Rule
     {
         $body = $this->body;
 
-        $body(...$args);
+        return $body(...$args);
     }
 }

@@ -165,4 +165,19 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
         $overrider->execute("abv", 2.3, 123);
     }
+
+    public function testReturnValueShouldBeFromExecutedRule()
+    {
+        $this->expectException(CannotMatchConstructorException::class);
+
+        $overrider = new Overrider();
+
+        $overrider->override(function (int $a) {
+            return $a;
+        });
+
+        $this->assertEquals(3, $overrider->execute(3));
+        $this->assertEquals(4, $overrider->execute(4));
+        $this->assertEquals(423, $overrider->execute(423));
+    }
 }
