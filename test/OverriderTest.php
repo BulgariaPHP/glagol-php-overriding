@@ -188,6 +188,29 @@ class OverriderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($overrider->execute('123'));
     }
 
+    public function testExecuteARuleWithOptionalSignaturePatternUsingNoArgs()
+    {
+        $this->expectException(CannotMatchConstructorException::class);
+
+        $overrider = new Overrider();
+
+        $overrider->override(function (float $b = null, float $c = null) {
+            return true;
+        });
+
+        $overrider->override(function (int $a) {
+            return false;
+        }, new Integer());
+
+        $overrider->override(function (string $a) {
+            return false;
+        }, new Str());
+
+        $this->assertTrue($overrider->execute());
+        $this->assertFalse($overrider->execute(123));
+        $this->assertFalse($overrider->execute('123'));
+    }
+
     public function testReturnValueShouldBeFromExecutedRule()
     {
         $this->expectException(CannotMatchConstructorException::class);

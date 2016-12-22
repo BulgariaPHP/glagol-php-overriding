@@ -34,6 +34,10 @@ class Rule
             return false;
         }
 
+        if (0 === count($args) && 0 === count($this->signature)) {
+            return true;
+        }
+
         $position = 0;
         foreach ($args as $position => $arg) {
             if (!$this->signature[$position]->isSameTypeAs($arg)) {
@@ -41,7 +45,7 @@ class Rule
             }
         }
 
-        for ($i = $position + 1; $i < count($this->signature); $i++) {
+        for ($i = $position > 0 ? $position + 1 : 0; $i < count($this->signature); $i++) {
             if (!$this->signature[$i] instanceof Optional) {
                 return false;
             }
