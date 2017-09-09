@@ -18,6 +18,6 @@ class CustomTest extends PHPUnit_Framework_TestCase
 
     public function testShouldSetTypeWhenClassExists()
     {
-        $this->assertTrue((new Custom(Overrider::class))->isSameTypeAs('Glagol\Overriding\Overrider'));
+        $this->assertTrue((new Custom(\stdClass::class))->isSameTypeAs(new \stdClass()));
     }
 }

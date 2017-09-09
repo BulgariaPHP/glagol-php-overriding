@@ -20,6 +20,10 @@ class Custom implements Type
 
     public function isSameTypeAs($value): bool
     {
-        return $value === $this->type;
+        if (!is_object($value)) {
+            return false;
+        }
+
+        return get_class($value) === $this->type;
     }
 }
