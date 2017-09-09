@@ -34,14 +34,18 @@ class Rule
             return false;
         }
 
-        $position = 0;
+        if (0 === count($args) && 0 === count($this->signature)) {
+            return true;
+        }
+
+        $position = false;
         foreach ($args as $position => $arg) {
             if (!$this->signature[$position]->isSameTypeAs($arg)) {
                 return false;
             }
         }
 
-        for ($i = $position + 1; $i < count($this->signature); $i++) {
+        for ($i = $position === false ? 0 : $position + 1; $i < count($this->signature); $i++) {
             if (!$this->signature[$i] instanceof Optional) {
                 return false;
             }
@@ -77,6 +81,6 @@ class Rule
     {
         $body = $this->body;
 
-        $body(...$args);
+        return $body(...$args);
     }
 }
