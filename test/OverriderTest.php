@@ -2,8 +2,9 @@
 declare(strict_types=1);
 namespace GlagolTest\Overriding;
 
-use Glagol\Overriding\CannotMatchConstructorException;
+use Glagol\Overriding\NoMatchingConstructorException;
 use Glagol\Overriding\DuplicateRuleException;
+use Glagol\Overriding\NoMatchingMethodException;
 use Glagol\Overriding\Overrider;
 use Glagol\Overriding\Parameter\Integer;
 use Glagol\Overriding\Parameter\Optional;
@@ -17,7 +18,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 {
     public function testShouldMatchRuleWithOneIntegerParamUsingOneRule()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(false, 'OverriderTest', 'test');
         $overrider->override(function (int $a) {
             $this->assertSame($a, 5);
         }, new Integer());
@@ -29,7 +30,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testShouldMatchRuleWithOneIntegerParamUsingTwoOtherRules()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(false, 'OverriderTest', 'test');
 
         $overrider->override(function (int $a) {
             $this->assertSame($a, 5);
@@ -50,7 +51,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testShouldMatchRuleWithOneStringParamUsingThreeRules()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(false, 'OverriderTest', 'test');
 
         $overrider->override(function (int $a) {
             throw new PHPUnit_Framework_Exception("This should not be called");
@@ -71,7 +72,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testShouldMatchRuleWithOneStringAndAFloatParamsUsingThreeRules()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(false, 'OverriderTest', 'test');
 
         $overrider->override(function (int $a) {
             throw new PHPUnit_Framework_Exception("This should not be called");
@@ -93,9 +94,23 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testShouldThrowConstructorNotFoundExceptionWhenThereAreMoreRequiredParameters()
     {
-        $this->expectException(CannotMatchConstructorException::class);
+        $this->expectException(NoMatchingConstructorException::class);
+        $this->expectExceptionMessage('Cannot match constructor for OverriderTest');
 
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
+
+        $overrider->override(function (string $a, float $c, float $d) {
+        }, new Str(), new Real(), new Real());
+
+        $overrider->execute("bla", 2.3);
+    }
+
+    public function testShouldThrowMethodNotFoundExceptionWhenThereAreMoreRequiredParameters()
+    {
+        $this->expectException(NoMatchingMethodException::class);
+        $this->expectExceptionMessage('Cannot match method OverriderTest::test');
+
+        $overrider = new Overrider(false, 'OverriderTest', 'test');
 
         $overrider->override(function (string $a, float $c, float $d) {
         }, new Str(), new Real(), new Real());
@@ -105,7 +120,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testShouldMatchConstructorWithEmptyOptionalParameters()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $overrider->override(function (string $a, float $c, float $d = null) {
             $this->assertSame("bla", $a);
@@ -120,14 +135,14 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testFluidInterface()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $this->assertInstanceOf(Rule::class, $overrider->override(function (int $a) {}, new Integer()));
     }
 
     public function testShouldExecuteOnlyOnWhenCondition()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $rule = $overrider->override(function (string $a, float $c, float $d = null) {
             $this->assertSame("abv", $a);
@@ -153,9 +168,9 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testNotMatchingWhenArgsAreMoreThanExpected()
     {
-        $this->expectException(CannotMatchConstructorException::class);
+        $this->expectException(NoMatchingConstructorException::class);
 
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $overrider->override(function (string $a, float $c) {
             $this->assertSame("abv", $a);
@@ -167,7 +182,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testExecuteARuleWithEmptySignature()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $overrider->override(function () {
             return true;
@@ -188,7 +203,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testExecuteARuleWithOptionalSignaturePatternUsingNoArgs()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $overrider->override(function (float $b = null, float $c = null) {
             return true;
@@ -209,7 +224,7 @@ class OverriderTest extends PHPUnit_Framework_TestCase
 
     public function testReturnValueShouldBeFromExecutedRule()
     {
-        $overrider = new Overrider();
+        $overrider = new Overrider(true, 'OverriderTest');
 
         $overrider->override(function (int $a) {
             return $a;

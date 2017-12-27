@@ -9,6 +9,40 @@ class Overrider
      */
     private $overrides = [];
 
+    /**
+     * @var bool
+     */
+    private $isConstructor;
+
+    /**
+     * Parenting artifact real name
+     *
+     * @var string
+     */
+    private $artifactName;
+
+    /**
+     * Name of the method being overridden
+     *
+     * @var string
+     */
+    private $methodName;
+
+    /**
+     * Overrider constructor.
+     *
+     * @param bool $isConstructor
+     * @param string $artifactName
+     * @param string $methodName    Glagol DSL overridden method name
+     */
+    public function __construct(bool $isConstructor, string $artifactName, string $methodName = null)
+    {
+        $this->isConstructor = $isConstructor;
+        $this->artifactName = $artifactName;
+        $this->methodName = $methodName;
+    }
+
+
     public function override(callable $body, Parameter\Type ...$signature): Rule
     {
         return $this->overrides[] = new Rule($body, ...$signature);
@@ -34,6 +68,10 @@ class Overrider
             }
         }
 
-        throw new CannotMatchConstructorException();
+        if ($this->isConstructor) {
+            throw new NoMatchingConstructorException($this->artifactName);
+        }
+
+        throw new NoMatchingMethodException($this->artifactName, $this->methodName);
     }
 }
