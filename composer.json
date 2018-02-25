@@ -2,7 +2,7 @@
   "name": "bulgaria-php/glagol-php-overriding",
   "description": "Library for handling in-method overriding based on argument signature. Created for the purposes of Glagol DSL",
   "minimum-stability": "dev",
-  "license": "proprietary",
+  "license": "GPL-3.0",
   "authors": [
     {
       "name": "Yoan-Alexander Grigorov",
